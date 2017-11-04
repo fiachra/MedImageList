@@ -16,6 +16,7 @@
 		575F31231FACBA4E005E3DF7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 575F31221FACBA4E005E3DF7 /* main.m */; };
 		575F312D1FACBA4F005E3DF7 /* MedableImageListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 575F312C1FACBA4F005E3DF7 /* MedableImageListTests.m */; };
 		575F31381FACBA4F005E3DF7 /* MedableImageListUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 575F31371FACBA4F005E3DF7 /* MedableImageListUITests.m */; };
+		575F31471FACF14A005E3DF7 /* ImageTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 575F31461FACF14A005E3DF7 /* ImageTableViewCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +55,8 @@
 		575F31331FACBA4F005E3DF7 /* MedableImageListUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MedableImageListUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		575F31371FACBA4F005E3DF7 /* MedableImageListUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MedableImageListUITests.m; sourceTree = "<group>"; };
 		575F31391FACBA4F005E3DF7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		575F31451FACF14A005E3DF7 /* ImageTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageTableViewCell.h; sourceTree = "<group>"; };
+		575F31461FACF14A005E3DF7 /* ImageTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImageTableViewCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +114,8 @@
 				575F31161FACBA4E005E3DF7 /* DetailViewController.h */,
 				575F31171FACBA4E005E3DF7 /* DetailViewController.m */,
 				575F31191FACBA4E005E3DF7 /* Main.storyboard */,
+				575F31451FACF14A005E3DF7 /* ImageTableViewCell.h */,
+				575F31461FACF14A005E3DF7 /* ImageTableViewCell.m */,
 				575F311C1FACBA4E005E3DF7 /* Assets.xcassets */,
 				575F311E1FACBA4E005E3DF7 /* LaunchScreen.storyboard */,
 				575F31211FACBA4E005E3DF7 /* Info.plist */,
@@ -272,6 +277,7 @@
 			files = (
 				575F31151FACBA4E005E3DF7 /* MasterViewController.m in Sources */,
 				575F31121FACBA4E005E3DF7 /* AppDelegate.m in Sources */,
+				575F31471FACF14A005E3DF7 /* ImageTableViewCell.m in Sources */,
 				575F31231FACBA4E005E3DF7 /* main.m in Sources */,
 				575F31181FACBA4E005E3DF7 /* DetailViewController.m in Sources */,
 			);
