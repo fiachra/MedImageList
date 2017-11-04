@@ -10,35 +10,55 @@
 #import "DetailViewController.h"
 #import "ImageTableViewCell.h"
 
-@interface MasterViewController () <UISearchDisplayDelegate, UISearchBarDelegate>
+@interface MasterViewController () <UISearchBarDelegate>
 
 @property NSMutableArray *objects;
 
 -(void)updateTableData;
+@property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 
 @end
 
 @implementation MasterViewController{
     int _pageNumber;
     NSString *_searchTerm;
+    int _searchReturnPages;
+    
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     self.navigationItem.leftBarButtonItem = self.editButtonItem;
-
-    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
-    self.navigationItem.rightBarButtonItem = addButton;
+    self.navigationItem.leftBarButtonItem.title = @"Select";
+    
+    self.tableView.allowsMultipleSelectionDuringEditing = YES;
     self.detailViewController = (DetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
     
     _pageNumber = 1;
-    _searchTerm = @"cow";
+    _searchTerm = @"";
     
-    [self updateTableData];
+    self.searchBar.delegate = self;
+    
     
 }
 
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    [super setEditing:editing animated:animated];
+    NSLog(@"EDITING");
+    
+    if(editing == YES)
+    {
+        UIBarButtonItem *saveButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(saveImages:)];
+        self.navigationItem.rightBarButtonItem = saveButton;
+        // Your code for entering edit mode goes here
+    } else {
+        // Your code for exiting edit mode goes here
+        self.navigationItem.rightBarButtonItem = nil;
+        self.navigationItem.leftBarButtonItem.title = @"Select";
+    }
+}
 
 - (void)viewWillAppear:(BOOL)animated {
     self.clearsSelectionOnViewWillAppear = self.splitViewController.isCollapsed;
@@ -52,15 +72,10 @@
 }
 
 
-- (void)insertNewObject:(id)sender {
-    if (!self.objects) {
-        self.objects = [[NSMutableArray alloc] init];
-    }
-    NSString *ImageURL = @"https://images.unsplash.com/photo-1454179083322-198bb4daae41?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&s=970044d23cedaac1ebfeca35f8eddbcc";
+- (void)saveImages:(id)sender {
     
-    [self.objects insertObject:ImageURL atIndex:0];
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-    [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    NSLog(@"Saving");
+    
 }
 
 - (void) updateTableData{
@@ -94,6 +109,11 @@
 }
 #pragma mark - Segues
 
+- (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
+{
+    return NO;
+}
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([[segue identifier] isEqualToString:@"showDetail"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
@@ -120,6 +140,12 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
      ImageTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
+    
+    if([[tableView indexPathsForSelectedRows] containsObject:indexPath]) {
+        cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    } else {
+        cell.accessoryType = UITableViewCellAccessoryNone;
+    }
     
      NSLog([NSString stringWithFormat:@"Table Row:%d", indexPath.row]);
 
@@ -170,5 +196,19 @@
      
     }
 }
+#pragma mark - Search delegate methods
 
+-(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
+{
+    [searchBar resignFirstResponder];
+    
+    _pageNumber = 1;
+    _searchTerm = searchBar.text;
+    [self.objects removeAllObjects];
+    
+    [self updateTableData];
+    
+    NSLog(_searchTerm);
+    
+}
 @end
