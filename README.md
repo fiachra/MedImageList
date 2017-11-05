@@ -1,5 +1,5 @@
 # MedImageList
-An iOS Objective-C project forfetching images via a REST API, displaying them and saving them to the camera roll
+An iOS Objective-C project for fetching images via a REST API, displaying them and saving them to the camera roll
 
 ## Functional Demo
 
