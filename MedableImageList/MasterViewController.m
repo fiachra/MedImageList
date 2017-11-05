@@ -50,7 +50,6 @@
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
     [super setEditing:editing animated:animated];
-    NSLog(@"EDITING");
     
     if(editing == YES)
     {
@@ -68,15 +67,6 @@
     }
 }
 
-
-- (void)thisImage:(UIImage *)image hasBeenSavedInPhotoAlbumWithError:(NSError *)error usingContextInfo:(void*)ctxInfo {
-    if (error) {
-        // Do anything needed to handle the error or display it to the user
-    } else {
-        // .... do anything you want here to handle
-        // .... when the image has been saved in the photo album
-    }
-}
 - (void)viewWillAppear:(BOOL)animated {
     self.clearsSelectionOnViewWillAppear = self.splitViewController.isCollapsed;
     [super viewWillAppear:animated];
@@ -91,18 +81,25 @@
 
 - (void)saveImages:(id)sender {
     
-    NSLog(@"Saving");
     [self addActivityIndicator];
     for (NSDictionary *res in self.selectedObjects ){
         NSString *imageUrl = [[res objectForKey:@"urls"] objectForKey:@"regular"];
         NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:imageUrl]];
-        UIImageWriteToSavedPhotosAlbum([UIImage imageWithData:imageData] ,self, @selector(thisImage:hasBeenSavedInPhotoAlbumWithError:usingContextInfo:),NULL);
+        UIImageWriteToSavedPhotosAlbum([UIImage imageWithData:imageData] ,nil,nil,nil);
         
     }
     
     [self removeActivityIndicator];
     [super setEditing:false animated:true];
+    self.navigationItem.rightBarButtonItem = nil;
     _selecting = false;
+    
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Medable Images"
+                                                    message:@"Images Saved"
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
     
 }
 
@@ -140,14 +137,15 @@
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     
-    [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://api.unsplash.com/search/photos/?client_id=d57506fcfc106f75b2c01e4d4fce445d330346461610e3879335ebdffeb9c79d&per_page=25&query=%@&page=%d", _searchTerm, _pageNumber]]];
+    
+    [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://api.unsplash.com/search/photos/?client_id=d57506fcfc106f75b2c01e4d4fce445d330346461610e3879335ebdffeb9c79d&per_page=25&query=%@&page=%d", [_searchTerm stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]], _pageNumber]]];
     
     [request setHTTPMethod:@"GET"];
     
     NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
     [[session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        NSString *requestReply = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-        NSLog(@"Request reply: %@", requestReply);
+        //NSString *requestReply = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
+        //NSLog(@"Request reply: %@", requestReply);
         
         if (!self.objects) {
             self.objects = [[NSMutableArray alloc] init];
@@ -155,11 +153,12 @@
         
         NSDictionary* json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
         NSArray* results = [json objectForKey:@"results"];
+        _searchReturnPages = (int)[json valueForKey:@"total_pages"];
         
         for (NSDictionary *res in results ){
-            [self.objects insertObject:res atIndex:0];
+            [self.objects addObject:res];
         }
-        //NSLog(self.objects.count);
+
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.tableView reloadData];
             [self removeActivityIndicator];
@@ -179,7 +178,7 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([[segue identifier] isEqualToString:@"showDetail"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-        NSDate *object = self.objects[indexPath.row];
+        NSDictionary *object = self.objects[indexPath.row];
         DetailViewController *controller = (DetailViewController *)[[segue destinationViewController] topViewController];
         [controller setDetailItem:object];
         controller.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
@@ -192,24 +191,16 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
     if (!self.selectedObjects ) {
         self.selectedObjects = [[NSMutableArray alloc] init];
     }
     
     [self.selectedObjects addObject:self.objects[indexPath.row]];
-    
-    NSLog([NSString stringWithFormat:@"Select Index %ld Num Selected:%d", indexPath.row, self.selectedObjects.count]);
-    
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(nonnull NSIndexPath *)indexPath
 {
-    
     [self.selectedObjects removeObject:self.objects[indexPath.row]];
-    
-    NSLog([NSString stringWithFormat:@"Deselect Index %ldNum Selected:%d", indexPath.row, self.selectedObjects.count]);
-    
 }
 
 
@@ -226,27 +217,43 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
      ImageTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
     
-     NSLog([NSString stringWithFormat:@"Table Row:%d", indexPath.row]);
-
-    //NSDate *object = self.objects[indexPath.row];
     NSDictionary *image = self.objects[indexPath.row];
-    NSString *imageThumb = [[image objectForKey:@"urls"] objectForKey:@"thumb"];
+    
+    
+    id Value = [[image objectForKey:@"urls"] objectForKey:@"thumb"];
+    NSString *imageThumb = @"";
+    if (Value != [NSNull null]) {
+        imageThumb = (NSString *)Value;
+    }
+    
     NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:imageThumb]];
     cell.PreviewImage.image = [UIImage imageWithData:imageData];
+    cell.PreviewImage.layer.cornerRadius = 20;
+    cell.PreviewImage.clipsToBounds = YES;
     
-    NSString* username = [[image objectForKey:@"user"] objectForKey:@"name"];
-    NSString* description = @"";
+    NSString* username = @"None";//[[image objectForKey:@"user"] objectForKey:@"name"];
+    NSString* description = @"None";
     
-    if([image objectForKey:@"description"])
-        description = [image objectForKey:@"description"];
+    Value = [[image objectForKey:@"user"] objectForKey:@"name"];
+    if (Value != [NSNull null]) {
+        username = (NSString *)Value;
+    }
+
+    Value = [image objectForKey:@"description"];
+    if (Value != [NSNull null]) {
+        description = (NSString *)Value;
+    }
     
     cell.ImageTitle.text = username;
-    cell.ImageDescription.text = @"Fffffffffffffffffffffffffffff";
+    cell.ImageDescription.text = description;
     
     if(indexPath.row == self.objects.count-1 && !_loading)
     {
-        _pageNumber++;
-        [self updateTableData];
+        if(_searchReturnPages > _pageNumber)
+        {
+            _pageNumber++;
+            [self updateTableData];
+        }
     }
     
     return cell;
@@ -272,16 +279,6 @@
     return 110.0;
 }
 
--(void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if([indexPath row] == ((NSIndexPath*)[[tableView indexPathsForVisibleRows] lastObject]).row){
-        //end of loading
-        //for example [activityIndicator stopAnimating];
-
-        _pageNumber++;
-     
-    }
-}
 #pragma mark - Search delegate methods
 
 -(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
@@ -293,8 +290,5 @@
     [self.objects removeAllObjects];
     
     [self updateTableData];
-    
-    NSLog(_searchTerm);
-    
 }
 @end

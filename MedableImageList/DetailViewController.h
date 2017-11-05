@@ -10,8 +10,14 @@
 
 @interface DetailViewController : UIViewController
 
-@property (strong, nonatomic) NSDate *detailItem;
-@property (weak, nonatomic) IBOutlet UILabel *detailDescriptionLabel;
+@property (strong, nonatomic) NSDictionary *detailItem;
+
+@property (weak, nonatomic) IBOutlet UIImageView *detalImage;
+@property (weak, nonatomic) IBOutlet UILabel *detailUsername;
+@property (weak, nonatomic) IBOutlet UILabel *detailDescription;
+@property (weak, nonatomic) IBOutlet UILabel *detailCreated;
+
+- (IBAction)saveImage:(id)sender;
 
 @end
 

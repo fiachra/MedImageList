@@ -17,6 +17,9 @@
 		575F312D1FACBA4F005E3DF7 /* MedableImageListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 575F312C1FACBA4F005E3DF7 /* MedableImageListTests.m */; };
 		575F31381FACBA4F005E3DF7 /* MedableImageListUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 575F31371FACBA4F005E3DF7 /* MedableImageListUITests.m */; };
 		575F31471FACF14A005E3DF7 /* ImageTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 575F31461FACF14A005E3DF7 /* ImageTableViewCell.m */; };
+		57D207FF1FAF266500FA1442 /* din-1451-ef-mittel-neu-1361534755.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 57D207FE1FAF100700FA1442 /* din-1451-ef-mittel-neu-1361534755.ttf */; };
+		57D208001FAF266600FA1442 /* din-1451-ef-mittel-neu-1361534755.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 57D207FE1FAF100700FA1442 /* din-1451-ef-mittel-neu-1361534755.ttf */; };
+		57D208011FAF266700FA1442 /* din-1451-ef-mittel-neu-1361534755.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 57D207FE1FAF100700FA1442 /* din-1451-ef-mittel-neu-1361534755.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -260,6 +263,7 @@
 			files = (
 				575F31201FACBA4E005E3DF7 /* LaunchScreen.storyboard in Resources */,
 				575F311D1FACBA4E005E3DF7 /* Assets.xcassets in Resources */,
+				57D207FF1FAF266500FA1442 /* din-1451-ef-mittel-neu-1361534755.ttf in Resources */,
 				575F311B1FACBA4E005E3DF7 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -268,6 +272,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				57D208001FAF266600FA1442 /* din-1451-ef-mittel-neu-1361534755.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,6 +280,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				57D208011FAF266700FA1442 /* din-1451-ef-mittel-neu-1361534755.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
